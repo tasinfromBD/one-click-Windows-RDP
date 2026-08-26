@@ -1,0 +1,22 @@
+name: Cardless Windows RDP
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Create User & Enable RDP
+        run: |
+          net user rdpuser YourPassword123! /add
+          net localgroup administrators rdpuser /add
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+
+      - name: Setup Cloudflare Tunnel
+        run: |
+          Invoke-WebRequest https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile cloudflared.exe
+          .\cloudflared.exe tunnel --url http://localhost:3389
+
+      - name: Keep Alive
+        run: Start-Sleep -Seconds 21600
