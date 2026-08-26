@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Create User & Enable RDP
         run: |
-          net user rdpuser YourPassword123! /add
+          net user rdpuser Pass1234 /add
           net localgroup administrators rdpuser /add
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
 
@@ -20,3 +20,4 @@ jobs:
 
       - name: Keep Alive
         run: Start-Sleep -Seconds 21600
+        
