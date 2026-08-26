@@ -13,9 +13,9 @@ jobs:
           net localgroup administrators rdpuser /add
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
 
-      - name: Start Pinggy TCP Tunnel
+      - name: Start Tunnel (Serveo)
         run: |
-          ssh -o StrictHostKeyChecking=no -p 443 -R 0:localhost:3389 a.pinggy.io
+          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R 0:localhost:3389 serveo.net
 
       - name: Keep Alive
         run: Start-Sleep -Seconds 21600
