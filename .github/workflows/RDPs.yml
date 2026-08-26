@@ -13,9 +13,12 @@ jobs:
           net localgroup administrators rdpuser /add
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
 
-      - name: Start Tunnel (Serveo)
+      - name: Setup Bore Tunnel
         run: |
-          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -R 0:localhost:3389 serveo.net
+          Invoke-WebRequest -Uri "https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-v0.5.0-x86_64-pc-windows-msvc.zip" -OutFile "bore.zip"
+          Expand-Archive bore.zip -DestinationPath .
+          .\bore.exe local 3389 --to bore.pub
 
       - name: Keep Alive
         run: Start-Sleep -Seconds 21600
+        
