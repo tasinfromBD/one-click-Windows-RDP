@@ -1,0 +1,34 @@
+name: Kali Linux Remote Desktop
+
+on:
+  workflow_dispatch:
+
+jobs:
+  kali-desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Desktop & XRDP
+        run: |
+          sudo apt update
+          sudo apt install -y xfce4 xfce4-goodies xrdp
+          echo "xfce4-session" > ~/.xsession
+          sudo systemctl restart xrdp
+          
+          # User creation for RDP
+          sudo useradd -m -s /bin/bash rdpuser
+          echo "rdpuser:Pass1234" | sudo chpasswd
+          sudo usermod -aG sudo rdpuser
+
+      - name: Install Kali Core Tools
+        run: |
+          sudo apt install -y nmap htop curl wget git
+
+      - name: Install & Run Bore Tunnel
+        run: |
+          wget https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-v0.5.0-x86_64-unknown-linux-musl.tar.gz
+          tar -xf bore-v0.5.0-x86_64-unknown-linux-musl.tar.gz
+          ./bore local 3389 --to bore.pub
+
+      - name: Keep Alive
+        run: sleep 21600
+        
