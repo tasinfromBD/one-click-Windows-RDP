@@ -7,16 +7,10 @@ jobs:
   kali-desktop:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Kali Linux Tools & RDP
+      - name: Start Kali RDP Server
         run: |
-          sudo apt update
-          sudo apt install -y xrdp xfce4 xfce4-goodies kali-tools-top10
-          echo "xfce4-session" > ~/.xsession
-          sudo systemctl enable xrdp
-          sudo service xrdp restart
-          sudo useradd -m -s /bin/bash rdpuser
-          echo "rdpuser:Pass1234" | sudo chpasswd
-          sudo usermod -aG sudo rdpuser
+          docker run -d --name kali -p 3389:3389 --expose 3389 lscr.io/linuxserver/kali-linux:latest
+          sudo apt update && sudo apt install -y net-tools
 
       - name: Install & Run Bore Tunnel
         run: |
