@@ -10,14 +10,21 @@ jobs:
       - name: Install Desktop & XRDP
         run: |
           sudo apt update
-          sudo apt install -y xfce4 xfce4-goodies xrdp
-          echo "xfce4-session" > ~/.xsession
-          sudo systemctl restart xrdp
+          sudo apt install -y xfce4 xfce4-goodies xrdp dbus-x11
           
-          # User creation for RDP
+          # Setup Desktop Session for RDP
           sudo useradd -m -s /bin/bash rdpuser
           echo "rdpuser:Pass1234" | sudo chpasswd
           sudo usermod -aG sudo rdpuser
+          
+          # Fix Session Error
+          echo "startxfce4" | sudo tee /home/rdpuser/.xsession
+          sudo chown rdpuser:rdpuser /home/rdpuser/.xsession
+          
+          # Configure XRDP Startup Script
+          sudo sed -i.bak '/test -x \/etc\/X11\/Xsession/i export XDG_DATA_DIRS=/usr/share/xfce4:/usr/local/share:/usr/share\nexport XDG_CONFIG_DIRS=/etc/xdg\nstartxfce4 &' /etc/xrdp/startwm.sh
+          
+          sudo systemctl restart xrdp
 
       - name: Install Kali Core Tools
         run: |
