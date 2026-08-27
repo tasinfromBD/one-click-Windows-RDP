@@ -7,11 +7,14 @@ jobs:
   kali-desktop:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Kali Linux with RDP
+      - name: Launch Kali Linux RDP Server
         run: |
-          docker run -d --name kali --net=host -e PUID=1000 -e PGID=1000 -e TZ=Etc/UTC -e SUBFOLDER=/ lscr.io/linuxserver/kali-linux:latest
-          docker exec kali apt-get update
-          docker exec kali apt-get install -y kali-tools-top10
+          docker run -d \
+            --name kali-rdp \
+            -p 3389:3389 \
+            -e USERNAME=rdpuser \
+            -e PASSWORD=Pass1234 \
+            kasmweb/kali-rolling-headless:1.14.0
 
       - name: Install & Run Bore Tunnel
         run: |
